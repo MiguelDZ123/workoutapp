@@ -32,7 +32,6 @@ const OTPInput: React.FC<OTPInputProps> = ({
       }}
       containerStyle="flex justify-center"
       shouldAutoFocus
-      disabled={disabled}
     />
   )
 }
