@@ -3,7 +3,9 @@
 import { useEffect, useState } from 'react';
 import Layout from "@/components/Layout";
 import { useSession } from 'next-auth/react';
-import { Dumbbell, Loader2 } from 'lucide-react';
+import { Dumbbell, Loader2, Edit2, Check, X } from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 interface SavedWorkout {
   id: string;
@@ -14,8 +16,11 @@ interface SavedWorkout {
 
 export default function SavedWorkouts() {
   const { data: session } = useSession();
+  const router = useRouter();
   const [workouts, setWorkouts] = useState<SavedWorkout[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editTitle, setEditTitle] = useState('');
 
   useEffect(() => {
     const fetchSavedWorkouts = async () => {
@@ -38,6 +43,57 @@ export default function SavedWorkouts() {
       fetchSavedWorkouts();
     }
   }, [session]);
+
+  const handleEdit = (workout: SavedWorkout) => {
+    setEditingId(workout.id);
+    setEditTitle(workout.title);
+  };
+
+  const handleSave = async (id: string) => {
+    try {
+      const response = await fetch(`/api/workouts/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ title: editTitle }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update title');
+      }
+
+      const data = await response.json();
+      setWorkouts(workouts.map(w => 
+        w.id === id ? { ...w, title: data.workout.title } : w
+      ));
+      setEditingId(null);
+      toast.success('Title updated successfully');
+    } catch (error) {
+      console.error('Error updating title:', error);
+      toast.error('Failed to update title');
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this workout?')) {
+      try {
+        const response = await fetch(`/api/workouts/${id}`, {
+          method: 'DELETE',
+        });
+        
+        if (response.ok) {
+          setWorkouts(workouts.filter(w => w.id !== id));
+          toast.success('Workout deleted successfully');
+        } else {
+          throw new Error('Failed to delete workout');
+        }
+      } catch (error) {
+        console.error('Error deleting workout:', error);
+        toast.error('Failed to delete workout');
+      }
+    }
+  };
 
   if (!session) {
     return (
@@ -77,32 +133,53 @@ export default function SavedWorkouts() {
               key={workout.id}
               className="p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:shadow-md transition-shadow"
             >
-              <h3 className="text-lg font-semibold mb-2">{workout.title}</h3>
+              <div className="flex items-center justify-between mb-2">
+                {editingId === workout.id ? (
+                  <div className="flex items-center gap-2 flex-1">
+                    <input
+                      type="text"
+                      value={editTitle}
+                      onChange={(e) => setEditTitle(e.target.value)}
+                      className="flex-1 px-2 py-1 text-sm border rounded"
+                      autoFocus
+                    />
+                    <button
+                      onClick={() => handleSave(workout.id)}
+                      className="p-1 text-green-500 hover:text-green-600"
+                    >
+                      <Check size={16} />
+                    </button>
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="p-1 text-gray-500 hover:text-gray-600"
+                    >
+                      <X size={16} />
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <h3 className="text-lg font-semibold">{workout.title}</h3>
+                    <button
+                      onClick={() => handleEdit(workout)}
+                      className="p-1 text-gray-500 hover:text-gray-600"
+                    >
+                      <Edit2 size={16} />
+                    </button>
+                  </>
+                )}
+              </div>
               <p className="text-sm text-gray-500 mb-4">
                 Saved on {new Date(workout.createdAt).toLocaleDateString()}
               </p>
               <div className="flex justify-between items-center">
                 <button
-                  onClick={() => window.location.href = `/workout/${workout.id}`}
+                  onClick={() => router.push(`/protected/workout/${workout.id}`)}
                   className="text-sm bg-green-500 text-white px-4 py-2 rounded-full hover:bg-green-600 transition-colors"
                 >
                   View Workout
                 </button>
                 <button
-                  onClick={async () => {
-                    if (confirm('Are you sure you want to delete this workout?')) {
-                      try {
-                        const response = await fetch(`/api/workouts/${workout.id}`, {
-                          method: 'DELETE',
-                        });
-                        if (response.ok) {
-                          setWorkouts(workouts.filter(w => w.id !== workout.id));
-                        }
-                      } catch (error) {
-                        console.error('Error deleting workout:', error);
-                      }
-                    }
-                  }}
+                  onClick={() => handleDelete(workout.id)}
                   className="text-sm text-red-500 hover:text-red-600"
                 >
                   Delete

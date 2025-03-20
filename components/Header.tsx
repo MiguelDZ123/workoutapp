@@ -5,6 +5,7 @@ import { Search, Home, Zap, Target, Settings, User, Save, Menu, X } from "lucide
 import { useCallback, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import AuthModal from '@/app/components/auth/AuthModal'
+import Image from 'next/image'
 
 export default function Header() {
   const { data: session, status } = useSession()
@@ -22,21 +23,20 @@ export default function Header() {
   }
 
   return (
-    <header className="w-full relative">
+    <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 shadow-sm">
       <div className="flex items-center justify-between py-3 px-2 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center gap-6">
           <Link href={"/"} className="flex items-center">
-            <h1 className="text-xl font-bold">WORKOUT.IO</h1>
+            <Image
+              src="/images/logo.png"
+              alt="WORKOUT.IO"
+              width={150}
+              height={40}
+              className="dark:brightness-200"
+            />
           </Link>
           
           <nav className="hidden md:flex items-center gap-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-            >
-              <Home size={18} />
-              <span>Home</span>
-            </Link>
             {session && (
               <Link
                 href="/protected/saved-workouts"
@@ -82,23 +82,35 @@ export default function Header() {
           </div>
           
           {status === 'loading' ? (
-            <div>Loading...</div>
+            <div className="h-9 w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
           ) : session ? (
             <div className="flex items-center gap-4">
-              <span className="text-sm hidden md:block">{session.user?.name}</span>
+              <div className="hidden md:block">
+                <div className="flex items-center gap-4">
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {session.user?.name || session.user?.email}
+                  </span>
+                  <button
+                    onClick={() => signOut()}
+                    className="text-sm bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              </div>
               <button
-                onClick={() => signOut()}
-                className="rounded-lg bg-red-500 px-4 py-2 text-white text-sm hidden md:block"
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="md:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
-                Logout
+                {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
               </button>
             </div>
           ) : (
-            <button 
-              onClick={toggleAuthModal}
-              className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="text-sm bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
             >
-              <User size={16} />
+              Sign In
             </button>
           )}
         </div>
@@ -108,14 +120,6 @@ export default function Header() {
       {isMobileMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 py-4 px-4 z-50">
           <nav className="flex flex-col space-y-4">
-            <Link
-              href="/"
-              className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white transition-colors"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              <Home size={18} />
-              <span>Home</span>
-            </Link>
             {session && (
               <>
                 <Link
@@ -136,7 +140,7 @@ export default function Header() {
                 </Link>
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div className="text-sm text-gray-700 dark:text-gray-300 mb-2">
-                    Signed in as {session.user?.name}
+                    Signed in as {session.user?.name || session.user?.email}
                   </div>
                   <button
                     onClick={() => {
