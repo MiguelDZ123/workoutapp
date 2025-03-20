@@ -53,7 +53,7 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
     if (!isWorkoutPlan) {
       // For regular responses, just render the markdown
       return (
-        <div className="prose prose-sm dark:prose-invert max-w-none">
+        <div className="prose prose-sm dark:prose-invert max-w-none pr-2 sm:pr-0">
           <ReactMarkdown>{content}</ReactMarkdown>
         </div>
       );
@@ -61,8 +61,8 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
     
     // For workout plans, create a more structured layout
     return (
-      <div className="space-y-4">
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-100 dark:border-green-800">
+      <div className="space-y-4 w-full">
+        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-3 sm:p-4 border border-green-100 dark:border-green-800">
           <div className="flex items-center justify-between mb-2">
             <h3 className="font-semibold text-lg flex items-center gap-2">
               <Dumbbell className="text-green-600 dark:text-green-400" size={20} />
@@ -76,16 +76,16 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
             </button>
           </div>
           
-          <div className="flex flex-wrap gap-3 mb-3">
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+          <div className="flex flex-wrap gap-2 sm:gap-3 mb-3">
+            <div className="bg-white dark:bg-gray-800 px-2 sm:px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
               <Calendar size={14} className="text-green-500" />
-              <span>Complete Workout Schedule</span>
+              <span>Complete Schedule</span>
             </div>
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+            <div className="bg-white dark:bg-gray-800 px-2 sm:px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
               <Clock size={14} className="text-green-500" />
               <span>With Rest Periods</span>
             </div>
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
+            <div className="bg-white dark:bg-gray-800 px-2 sm:px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
               <ArrowUpRight size={14} className="text-green-500" />
               <span>Progression Guidelines</span>
             </div>
@@ -94,7 +94,7 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
         
         {isExpanded && (
           <div className="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden">
-            <div className="prose prose-sm dark:prose-invert max-w-none p-4 overflow-auto max-h-[500px]">
+            <div className="prose prose-sm dark:prose-invert max-w-none p-3 sm:p-4 overflow-auto max-h-[500px]">
               <ReactMarkdown>{content}</ReactMarkdown>
             </div>
           </div>
@@ -103,20 +103,21 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
         <div className="flex flex-wrap gap-2 pt-2">
           <button 
             onClick={() => handleDownload(content)}
-            className="inline-flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-full hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
+            className="inline-flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-2 sm:px-3 py-1.5 rounded-full hover:bg-green-200 dark:hover:bg-green-800 transition-colors"
           >
             <Download size={14} />
-            Download Plan
+            <span className="hidden sm:inline">Download Plan</span>
+            <span className="sm:hidden">Download</span>
           </button>
-          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 sm:px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
             <ThumbsUp size={14} />
             Helpful
           </button>
-          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 sm:px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
             <ThumbsDown size={14} />
             Not helpful
           </button>
-          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+          <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-2 sm:px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
             <Share2 size={14} />
             Share
           </button>
@@ -126,64 +127,75 @@ export default function WorkoutChat({ messages, isLoading }: WorkoutChatProps) {
   };
 
   return (
-    <div className="w-full bg-gray-50 dark:bg-gray-900 rounded-lg p-4 overflow-y-auto max-h-[600px] border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col gap-6">
-        {messages.map((message, index) => (
-          <div 
-            key={index} 
-            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-          >
-            <div 
-              className={`max-w-[90%] ${
-                message.role === 'user' 
-                  ? 'bg-green-500 text-white p-4 rounded-lg rounded-tr-none' 
-                  : ''
-              }`}
-            >
-              {message.role === 'user' ? (
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-green-600 flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-bold">You</span>
-                  </div>
-                  <p>{message.content}</p>
-                </div>
-              ) : (
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
-                      <span className="text-sm font-bold text-green-800 dark:text-green-300">AI</span>
+    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-[calc(100vh-200px)]">
+      <div className="flex flex-col h-full">
+        <div className="bg-gray-50 dark:bg-gray-800/50 p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center">
+              <span className="text-sm font-bold text-green-800 dark:text-green-300">AI</span>
+            </div>
+            <div>
+              <h3 className="font-medium">Chat Assistant</h3>
+              <p className="text-xs text-gray-500">Ask questions about your workout plan</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-4">
+          <div className="flex flex-col gap-4">
+            {messages.map((message, index) => (
+              <div 
+                key={index} 
+                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div 
+                  className={`max-w-[85%] p-4 rounded-lg ${
+                    message.role === 'user' 
+                      ? 'bg-green-500 text-white' 
+                      : 'bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      message.role === 'user' 
+                        ? 'bg-green-600' 
+                        : 'bg-green-100 dark:bg-green-900'
+                    }`}>
+                      <span className={`text-xs font-bold ${
+                        message.role === 'user'
+                          ? 'text-white'
+                          : 'text-green-800 dark:text-green-300'
+                      }`}>
+                        {message.role === 'user' ? 'You' : 'AI'}
+                      </span>
                     </div>
-                    <span className="text-sm font-medium">Workout AI</span>
+                    <p className="text-sm">{message.content}</p>
                   </div>
-                  
-                  {formatWorkoutContent(message.content, index)}
-                </div>
-              )}
-            </div>
-          </div>
-        ))}
-        
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="max-w-[90%]">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
-                  <span className="text-sm font-bold text-green-800 dark:text-green-300">AI</span>
-                </div>
-                <span className="text-sm font-medium">Workout AI</span>
-              </div>
-              <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
-                <div className="flex gap-2">
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
                 </div>
               </div>
-            </div>
+            ))}
+            
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="max-w-[85%] p-4 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
+                  <div className="flex gap-2">
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            <div ref={chatEndRef} />
           </div>
-        )}
-        
-        <div ref={chatEndRef} />
+        </div>
+
+        <div className="border-t border-gray-200 dark:border-gray-700 p-3">
+          <p className="text-xs text-gray-500 text-center">
+            {isLoading ? 'AI is thinking...' : 'AI is ready for your questions'}
+          </p>
+        </div>
       </div>
     </div>
   );

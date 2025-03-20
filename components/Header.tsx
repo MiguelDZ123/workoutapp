@@ -1,38 +1,29 @@
+'use client'
+
 import Link from "next/link";
 import { Search, Home, Zap, Target, Settings, User } from "lucide-react";
+import { useCallback, useState } from 'react'
+import { signOut, useSession } from 'next-auth/react'
+import AuthModal from '@/app/components/auth/AuthModal'
 
 export default function Header() {
+  const { data: session, status } = useSession()
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  const toggleAuthModal = useCallback(() => {
+    if (!session) {
+      setIsAuthModalOpen((value) => !value)
+    }
+  }, [session])
+
   return (
     <header className="w-full flex items-center justify-between py-3 px-2 border-b border-gray-200 dark:border-gray-800">
       <div className="flex items-center gap-6">
-        <Link href="/" className="flex items-center">
+        <Link href={"/"} className="flex items-center">
           <h1 className="text-xl font-bold">WORKOUT.IO</h1>
         </Link>
         
         <nav className="hidden md:flex items-center gap-1">
-          <Link 
-            href="/" 
-            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
-          >
-            <Home size={18} />
-            <span>Home</span>
-          </Link>
-          
-          <Link 
-            href="/workouts" 
-            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
-          >
-            <Zap size={18} />
-            <span>Workouts</span>
-          </Link>
-          
-          <Link 
-            href="/nutrition" 
-            className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm"
-          >
-            <Target size={18} />
-            <span>Goals</span>
-          </Link>
         </nav>
       </div>
       
@@ -53,10 +44,28 @@ export default function Header() {
           <Settings size={20} className="text-gray-700 dark:text-gray-300" />
         </Link>
         
-        <button className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors">
-          <User size={16} />
-        </button>
+        {status === 'loading' ? (
+          <div>Loading...</div>
+        ) : session ? (
+          <div className="flex items-center gap-4">
+            <span className="text-sm">{session.user?.name}</span>
+            <button
+              onClick={() => signOut()}
+              className="rounded-lg bg-red-500 px-4 py-2 text-white text-sm"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button 
+            onClick={toggleAuthModal}
+            className="flex items-center justify-center w-8 h-8 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors"
+          >
+            <User size={16} />
+          </button>
+        )}
       </div>
+      <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </header>
   );
 } 

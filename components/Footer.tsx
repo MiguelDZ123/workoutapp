@@ -6,7 +6,7 @@ export default function Footer() {
     <footer className="w-full border-t border-gray-200 dark:border-gray-800 pt-4">
       <div className="flex flex-col sm:flex-row gap-4 sm:gap-0 justify-between items-center">
         <div className="flex items-center gap-2">
-          <span className="text-sm font-medium">WORKOUT.IO © 2023</span>
+          <span className="text-sm font-medium">WORKOUT.IO © 2025</span>
         </div>
         
         <div className="flex gap-[24px] flex-wrap items-center justify-center text-sm text-gray-500">

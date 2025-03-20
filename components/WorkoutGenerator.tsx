@@ -1,13 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, Info, Dumbbell, Calendar, ArrowRight } from 'lucide-react';
+import { Send, Info, Dumbbell, Calendar, ArrowRight, Download, MessageSquare } from 'lucide-react';
 import WorkoutChat from './WorkoutChat';
 import WorkoutFeatureCard from './WorkoutFeatureCard';
+import WorkoutResponse from './WorkoutResponse';
 
 export default function WorkoutGenerator() {
   const [prompt, setPrompt] = useState('');
   const [chatHistory, setChatHistory] = useState<Array<{role: string, content: string}>>([]);
+  const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [fitnessLevel, setFitnessLevel] = useState('');
   const [workoutGoal, setWorkoutGoal] = useState('');
@@ -22,13 +24,11 @@ export default function WorkoutGenerator() {
     const newMessage = { role: 'user', content: prompt };
     setChatHistory([...chatHistory, newMessage]);
     
-    // Clear input and set generating state
     setPrompt('');
     setIsGenerating(true);
     setError(null);
     
     try {
-      // Call the Gemini API through our backend route
       const response = await fetch('/api/generate-workout', {
         method: 'POST',
         headers: {
@@ -48,18 +48,17 @@ export default function WorkoutGenerator() {
       
       const data = await response.json();
       
+      // Set the workout response separately
+      setCurrentWorkout(data.workout);
+      
       // Add AI response to chat history
       setChatHistory(prev => [...prev, { 
         role: 'assistant', 
-        content: data.workout 
+        content: 'I\'ve generated a new workout plan for you! You can view it on the right.' 
       }]);
     } catch (error: any) {
-      console.error('Error generating workout:', error);
+      console.error('Error:', error);
       setError(error.message);
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: `Sorry, I encountered an error while generating your workout plan: ${error.message}. Please try again.` 
-      }]);
     } finally {
       setIsGenerating(false);
     }
@@ -117,9 +116,9 @@ export default function WorkoutGenerator() {
 
   return (
     <div className="w-full flex flex-col gap-8">
-      {chatHistory.length === 0 ? (
-        <>
-          
+      {!chatHistory.length ? (
+        // Initial features view
+        <>         
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <Info size={18} className="text-green-500" />
@@ -160,11 +159,78 @@ export default function WorkoutGenerator() {
           </div>
         </>
       ) : (
-        <WorkoutChat messages={chatHistory} isLoading={isGenerating} />
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6">
+          {/* Chat Section */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <MessageSquare size={20} className="text-green-600" />
+              Chat History
+            </h2>
+            <WorkoutChat 
+              messages={chatHistory} 
+              isLoading={isGenerating} 
+            />
+          </div>
+
+          {/* Workout Response Section */}
+          <div className="flex flex-col gap-4">
+            <h2 className="text-lg font-semibold flex items-center gap-2">
+              <Dumbbell size={20} className="text-green-600" />
+              Generated Workout Plan
+            </h2>
+            {currentWorkout ? (
+              <WorkoutResponse content={currentWorkout} />
+            ) : (
+              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-[calc(100vh-200px)] flex flex-col">
+                <div className="bg-green-50 dark:bg-green-900/20 p-4 border-b border-green-100 dark:border-green-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-lg flex items-center gap-2">
+                      <Dumbbell className="text-green-600 dark:text-green-400" size={20} />
+                      Your Workout Plan
+                    </h3>
+                  </div>
+                </div>
+                
+                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
+                  <div className="mb-4">
+                    <svg
+                      className="w-16 h-16 text-gray-400"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={1.5}
+                        d="M13 10V3L4 14h7v7l9-11h-7z"
+                      />
+                    </svg>
+                  </div>
+                  <p className="text-base font-medium mb-2">No workout plan generated yet</p>
+                  <p className="text-sm text-gray-400">
+                    Start chatting to generate your personalized workout plan
+                  </p>
+                </div>
+                
+                <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+                  <div className="flex flex-wrap gap-2 opacity-50">
+                    <button disabled className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full">
+                      <Download size={14} />
+                      Download Plan
+                    </button>
+                    {/* Add other disabled buttons */}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
-      
-      <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-        {chatHistory.length === 0 && (
+
+      {/* Chat Input - Move outside the grid to maintain full width */}
+      <form onSubmit={handleSubmit} className="w-full mt-4">
+        {!chatHistory.length && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
             <div>
               <label htmlFor="fitness-level" className="block text-sm font-medium mb-1">
@@ -202,7 +268,7 @@ export default function WorkoutGenerator() {
             </div>
           </div>
         )}
-        
+
         <div className="relative w-full">
           <div className="flex items-center w-full rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-3">
             <div className="flex items-center gap-2 mr-3">
@@ -248,21 +314,7 @@ export default function WorkoutGenerator() {
             </div>
           </div>
         </div>
-        
-        <div className="text-center text-sm text-gray-500">
-          {chatHistory.length === 0 
-            ? "Describe your fitness needs or select a prompt above to get started"
-            : "Ask follow-up questions or request modifications to your workout plan"}
-        </div>
       </form>
-      
-      {error && (
-        <div className="w-full p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-300 text-sm">
-          <p className="font-medium">Error generating workout:</p>
-          <p>{error}</p>
-          <p className="mt-2">Please try again or modify your request.</p>
-        </div>
-      )}
     </div>
   );
 } 

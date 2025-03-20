@@ -10,7 +10,7 @@ export default function Home() {
         </span>
         <h1 className="text-4xl font-bold mb-4">Fitness Plan Generator</h1>
         <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
-          Describe your fitness needs and goals, and our generator will create a personalized workout plan tailored just for you.
+        Tell us about your objectives and fitness requirements, and our generator will design a customized exercise schedule appropriate only for you.
         </p>
       </div>
       
