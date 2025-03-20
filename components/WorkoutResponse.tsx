@@ -1,17 +1,20 @@
 import { useState } from 'react';
-import { Download, ThumbsUp, ThumbsDown, Share2, ChevronDown, ChevronUp, Dumbbell, Calendar, Clock, ArrowUpRight, AlertCircle } from 'lucide-react';
+import { Download, ThumbsUp, ThumbsDown, Share2, ChevronDown, ChevronUp, Dumbbell, Calendar, Clock, ArrowUpRight, AlertCircle, Save } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import jsPDF from 'jspdf';
 import { toast } from 'react-hot-toast';
+import { useSession } from 'next-auth/react';
 
 interface WorkoutResponseProps {
   content: string;
 }
 
 export default function WorkoutResponse({ content }: WorkoutResponseProps) {
+  const { data: session } = useSession();
   const [isExpanded, setIsExpanded] = useState(true);
   const [activeDay, setActiveDay] = useState<number>(1);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
   // Parse the workout content into structured data
   const parseWorkoutContent = (content: string) => {
@@ -62,6 +65,38 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
   };
 
   const workoutPlan = parseWorkoutContent(content);
+
+  const handleSave = async () => {
+    if (!session) {
+      toast.error('Please sign in to save workouts');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/workouts/save', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: workoutPlan.title || 'Custom Workout Plan',
+          content,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save workout');
+      }
+
+      toast.success('Workout saved successfully!');
+    } catch (error) {
+      console.error('Error saving workout:', error);
+      toast.error('Failed to save workout');
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   const handleDownload = async () => {
     setIsDownloading(true);
@@ -192,12 +227,24 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
               <Dumbbell className="text-green-600 dark:text-green-400" size={20} />
               Your Workout Plan
             </h3>
-            <button 
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="p-1 rounded-full hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
-            >
-              {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-            </button>
+            <div className="flex items-center gap-2">
+              {session && (
+                <button
+                  onClick={handleSave}
+                  disabled={isSaving}
+                  className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-800 transition-colors text-green-600 dark:text-green-400"
+                  title="Save workout"
+                >
+                  <Save size={18} className={isSaving ? 'animate-pulse' : ''} />
+                </button>
+              )}
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                className="p-1 rounded-full hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
+              >
+                {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+            </div>
           </div>
           
           <div className="flex flex-wrap gap-3">
