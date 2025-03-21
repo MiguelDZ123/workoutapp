@@ -14,12 +14,12 @@ export default function WorkoutGenerator() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!prompt.trim()) return;
-    
+
     setIsGenerating(true);
     setError(null);
-    
+
     try {
       const response = await fetch('/api/generate-workout', {
         method: 'POST',
@@ -32,12 +32,12 @@ export default function WorkoutGenerator() {
           workoutGoal
         }),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to generate workout plan');
       }
-      
+
       const data = await response.json();
       setCurrentWorkout(data.workout);
     } catch (error: any) {
@@ -56,7 +56,7 @@ export default function WorkoutGenerator() {
   const generateWorkoutPlan = (userPrompt: string) => {
     // This would be replaced with actual AI API call
     const lowerPrompt = userPrompt.toLowerCase();
-    
+
     if (lowerPrompt.includes('beginner')) {
       return `## Beginner Workout Plan\n\n### Monday - Full Body\n- Bodyweight Squats: 3 sets of 12 reps\n- Push-ups (or knee push-ups): 3 sets of 8-10 reps\n- Dumbbell Rows: 3 sets of 10 reps per arm\n- Plank: 3 sets, hold for 20-30 seconds\n\n### Wednesday - Cardio\n- 5 minute warm-up walk\n- 20 minutes of interval walking/jogging\n- 5 minute cool-down\n\n### Friday - Full Body\n- Lunges: 3 sets of 10 reps per leg\n- Dumbbell Shoulder Press: 3 sets of 10 reps\n- Glute Bridges: 3 sets of 12 reps\n- Bird-dogs: 3 sets of 8 reps per side`;
     } else if (lowerPrompt.includes('weight loss') || lowerPrompt.includes('lose weight')) {
@@ -69,25 +69,25 @@ export default function WorkoutGenerator() {
   };
 
   const features = [
-    { 
-      title: "Personalized Plans", 
+    {
+      title: "Personalized Plans",
       description: "Get workouts tailored to your fitness level and goals",
-      icon: "💪" 
+      icon: "💪"
     },
-    { 
-      title: "Nutrition Tips", 
+    {
+      title: "Nutrition Tips",
       description: "Receive dietary suggestions to complement your workouts",
-      icon: "🥗" 
+      icon: "🥗"
     },
-    { 
-      title: "Progress Tracking", 
+    {
+      title: "Progress Tracking",
       description: "Track your fitness journey with detailed metrics",
-      icon: "📈" 
+      icon: "📈"
     },
-    { 
-      title: "Exercise Library", 
+    {
+      title: "Exercise Library",
       description: "Access a vast database of exercises with proper form guides",
-      icon: "📚" 
+      icon: "📚"
     }
   ];
 
@@ -102,7 +102,7 @@ export default function WorkoutGenerator() {
     <div className="w-full flex flex-col gap-8">
       {!currentWorkout ? (
         // Initial features view
-        <>         
+        <>
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <Info size={18} className="text-green-500" />
@@ -126,7 +126,7 @@ export default function WorkoutGenerator() {
               </li>
             </ul>
           </div>
-          
+
           <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
             <h3 className="text-md font-medium mb-3">Try one of these prompts:</h3>
             <div className="flex flex-wrap gap-2">
@@ -189,11 +189,17 @@ export default function WorkoutGenerator() {
 
         <div className="relative w-full">
           <div className="flex items-center w-full rounded-full ... border mt-8 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
-            <button 
+            <button
               type="button"
               className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
             >
               <Paperclip className="w-5 h-5" />
+            </button>
+            <button
+              type="button"
+              className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              <Mic className="w-5 h-5" />
             </button>
             <textarea
               className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
@@ -204,17 +210,11 @@ export default function WorkoutGenerator() {
               rows={1}
             />
             <div className="flex items-center gap-2">
-              <button 
-                type="button"
-                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              >
-                <Mic className="w-5 h-5" />
-              </button>
               <span className="text-xs text-gray-400">
                 {prompt.length}/3000
               </span>
-              <button 
-                type="submit" 
+              <button
+                type="submit"
                 className="ml-2 p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!prompt.trim() || isGenerating}
               >

@@ -48,6 +48,11 @@ export default function Header() {
             <Link href="/pricing" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
               Pricing
             </Link>
+            {session && (
+              <Link href="/protected/saved-workouts" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                My Workouts
+              </Link>)
+            }
           </nav>
         </div>
 
@@ -68,11 +73,8 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <div className="hidden md:block">
                 <div className="flex items-center gap-4">
-                  <Link href="/protected/saved-workouts" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
-                    Saved Workouts
-                  </Link>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    {session.user?.name || session.user?.email}
+                    <img className="rounded-full h-8 w-8" src={`${session.user?.image}`}/>
                   </span>
                   <button
                     onClick={() => signOut()}
@@ -125,7 +127,7 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          <div className="fixed inset-y-0 left-0 w-full max-w-sm bg-gradient-to-b from-green-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
+          <div className="fixed inset-y-0 left-0 w-full max-w-sm bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
                 <button
@@ -203,25 +205,22 @@ export default function Header() {
                   </Link>
                 </div>
 
-                {session ?
-                  <button
-                    onClick={() => {
-                      signOut();
-                      setIsMobileMenuOpen(false);
-                    }}
-                    className="text-sm text-gray-600 dark:text-gray-400"
-                  >
-                    Logout
-                  </button>
-
-                : 
-                  <button
-                    onClick={() => setIsAuthModalOpen(true)}
-                    className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors max-sm:hidden"
-                  >
-                    Sign in
-                  </button>
-                  }
+                {status === 'loading' ? (
+                  <div className="h-9 w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
+                ) : session ? (<button
+                  onClick={() => {
+                    signOut();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="text-sm text-gray-600 dark:text-gray-400"
+                >
+                  Logout
+                </button>) : (<button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="text-sm text-gray-600 dark:text-gray-400"
+                >
+                  Sign in
+                </button>)}
               </div>
             </div>
           </div>
