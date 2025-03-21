@@ -4,11 +4,11 @@ import prisma from '@/lib/prisma';
 
 export async function GET(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession();
-    const { id } = await context.params;
+    const { id } = params;
     
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -43,11 +43,11 @@ export async function GET(
 
 export async function PATCH(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession();
-    const { id } = await context.params;
+    const { id } = params;
     
     if (!session?.user?.email) {
       return NextResponse.json(
@@ -100,11 +100,11 @@ export async function PATCH(
 
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
   try {
     const session = await getServerSession();
-    const { id } = await context.params;
+    const { id } = params;
     
     if (!session?.user?.email) {
       return NextResponse.json(
