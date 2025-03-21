@@ -1,14 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Send, Info, Dumbbell, Calendar, ArrowRight, Download, MessageSquare } from 'lucide-react';
-import WorkoutChat from './WorkoutChat';
-import WorkoutFeatureCard from './WorkoutFeatureCard';
+import { Send, Info, Dumbbell, Calendar, ArrowRight, Paperclip, Mic } from 'lucide-react';
 import WorkoutResponse from './WorkoutResponse';
 
 export default function WorkoutGenerator() {
   const [prompt, setPrompt] = useState('');
-  const [chatHistory, setChatHistory] = useState<Array<{role: string, content: string}>>([]);
   const [currentWorkout, setCurrentWorkout] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [fitnessLevel, setFitnessLevel] = useState('');
@@ -20,11 +17,6 @@ export default function WorkoutGenerator() {
     
     if (!prompt.trim()) return;
     
-    // Add user message to chat
-    const newMessage = { role: 'user', content: prompt };
-    setChatHistory([...chatHistory, newMessage]);
-    
-    setPrompt('');
     setIsGenerating(true);
     setError(null);
     
@@ -47,15 +39,7 @@ export default function WorkoutGenerator() {
       }
       
       const data = await response.json();
-      
-      // Set the workout response separately
       setCurrentWorkout(data.workout);
-      
-      // Add AI response to chat history
-      setChatHistory(prev => [...prev, { 
-        role: 'assistant', 
-        content: 'I\'ve generated a new workout plan for you! You can view it on the right.' 
-      }]);
     } catch (error: any) {
       console.error('Error:', error);
       setError(error.message);
@@ -116,7 +100,7 @@ export default function WorkoutGenerator() {
 
   return (
     <div className="w-full flex flex-col gap-8">
-      {!chatHistory.length ? (
+      {!currentWorkout ? (
         // Initial features view
         <>         
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800">
@@ -159,78 +143,12 @@ export default function WorkoutGenerator() {
           </div>
         </>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-6">
-          {/* Chat Section */}
-          <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <MessageSquare size={20} className="text-green-600" />
-              Chat History
-            </h2>
-            <WorkoutChat 
-              messages={chatHistory} 
-              isLoading={isGenerating} 
-            />
-          </div>
-
-          {/* Workout Response Section */}
-          <div className="flex flex-col gap-4">
-            <h2 className="text-lg font-semibold flex items-center gap-2">
-              <Dumbbell size={20} className="text-green-600" />
-              Generated Workout Plan
-            </h2>
-            {currentWorkout ? (
-              <WorkoutResponse content={currentWorkout} />
-            ) : (
-              <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden h-[calc(100vh-200px)] flex flex-col">
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 border-b border-green-100 dark:border-green-800">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-semibold text-lg flex items-center gap-2">
-                      <Dumbbell className="text-green-600 dark:text-green-400" size={20} />
-                      Your Workout Plan
-                    </h3>
-                  </div>
-                </div>
-                
-                <div className="flex-1 flex flex-col items-center justify-center p-8 text-center">
-                  <div className="mb-4">
-                    <svg
-                      className="w-16 h-16 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={1.5}
-                        d="M13 10V3L4 14h7v7l9-11h-7z"
-                      />
-                    </svg>
-                  </div>
-                  <p className="text-base font-medium mb-2">No workout plan generated yet</p>
-                  <p className="text-sm text-gray-400">
-                    Start chatting to generate your personalized workout plan
-                  </p>
-                </div>
-                
-                <div className="border-t border-gray-200 dark:border-gray-700 p-4">
-                  <div className="flex flex-wrap gap-2 opacity-50">
-                    <button disabled className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full">
-                      <Download size={14} />
-                      Download Plan
-                    </button>
-                    {/* Add other disabled buttons */}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
+        <WorkoutResponse content={currentWorkout} />
       )}
 
-      {/* Chat Input - Move outside the grid to maintain full width */}
+      {/* Form Section */}
       <form onSubmit={handleSubmit} className="w-full mt-4">
-        {!chatHistory.length && (
+        {!currentWorkout && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
             <div>
               <label htmlFor="fitness-level" className="block text-sm font-medium mb-1">
@@ -270,46 +188,37 @@ export default function WorkoutGenerator() {
         )}
 
         <div className="relative w-full">
-          <div className="flex items-center w-full rounded-full border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-3">
-            <div className="flex items-center gap-2 mr-3">
-              <button 
-                type="button"
-                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
-                </svg>
-              </button>
-              <button 
-                type="button"
-                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"></path>
-                  <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-                  <line x1="12" x2="12" y1="19" y2="22"></line>
-                </svg>
-              </button>
-            </div>
-            
+          <div className="flex items-center w-full rounded-full ... border mt-8 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
+            <button 
+              type="button"
+              className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+            >
+              <Paperclip className="w-5 h-5" />
+            </button>
             <textarea
-              className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-0 px-0 text-sm"
+              className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
               placeholder="Describe your fitness goals, experience level, available equipment..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
+              maxLength={3000}
               rows={1}
             />
-            
-            <div className="flex items-center gap-3 ml-2">
-              <span className="text-xs text-gray-400 whitespace-nowrap">
+            <div className="flex items-center gap-2">
+              <button 
+                type="button"
+                className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+              >
+                <Mic className="w-5 h-5" />
+              </button>
+              <span className="text-xs text-gray-400">
                 {prompt.length}/3000
               </span>
               <button 
                 type="submit" 
-                className="p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="ml-2 p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={!prompt.trim() || isGenerating}
               >
-                <Send size={16} />
+                <Send className="w-4 h-4" />
               </button>
             </div>
           </div>

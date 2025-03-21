@@ -1,11 +1,13 @@
 'use client'
 
 import Link from "next/link";
-import { Search, Home, Zap, Target, Settings, User, Save, Menu, X } from "lucide-react";
+import { Search, Home, Zap, Target, Settings, User, Save, Menu, X, ChevronLeft, LayoutGrid, UserCog, AlertCircle, FileText, Smartphone, MessageSquare, SaveIcon, Banknote, BookOpenText } from "lucide-react";
 import { useCallback, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import AuthModal from '@/app/components/auth/AuthModal'
 import Image from 'next/image'
+import { BiMoney } from "react-icons/bi";
+import { CiMoneyBill } from "react-icons/ci";
 
 export default function Header() {
   const { data: session, status } = useSession()
@@ -66,6 +68,9 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <div className="hidden md:block">
                 <div className="flex items-center gap-4">
+                  <Link href="/protected/saved-workouts" className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white">
+                    Saved Workouts
+                  </Link>
                   <span className="text-sm text-gray-600 dark:text-gray-400">
                     {session.user?.name || session.user?.email}
                   </span>
@@ -120,9 +125,15 @@ export default function Header() {
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          <div className="fixed inset-y-0 right-0 w-full max-w-sm bg-white dark:bg-gray-900 shadow-xl">
+          <div className="fixed inset-y-0 left-0 w-full max-w-sm bg-gradient-to-b from-green-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
             <div className="flex flex-col h-full">
-              <div className="flex items-center justify-between px-4 py-4 border-b border-gray-200 dark:border-gray-800">
+              <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 -ml-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
+                >
+                  <ChevronLeft size={24} />
+                </button>
                 <Link href={"/"} className="flex items-center">
                   <Image
                     src="/images/logo.png"
@@ -132,73 +143,92 @@ export default function Header() {
                     className="dark:brightness-200"
                   />
                 </Link>
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white"
-                >
-                  <X size={24} />
-                </button>
               </div>
 
-              <nav className="flex-1 px-4 py-6 space-y-6">
-                <Link
-                  href="/features"
-                  className="block text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
-                  href="/solutions"
-                  className="block text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Documentation
-                </Link>
-                <Link
-                  href="/pricing"
-                  className="block text-base text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Pricing
-                </Link>
+              <nav className="flex-1 px-4 py-6">
+                <div className="space-y-6">
+                  <Link
+                    href="/summary"
+                    className="flex items-center gap-3 text-gray-700 dark:text-gray-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <LayoutGrid size={20} />
+                    <span>Features</span>
+                  </Link>
+                  <Link
+                    href="/account"
+                    className="flex items-center gap-3 text-gray-700 dark:text-gray-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <BookOpenText size={20} />
+                    <span>Documentation</span>
+                  </Link>
+                  <Link
+                    href="/alerts"
+                    className="flex items-center gap-3 text-gray-700 dark:text-gray-200"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Banknote size={20} />
+                    <span>Pricing</span>
+                  </Link>
+                  {session && (
+                    <Link
+                      href="/protected/saved-workouts"
+                      className="flex items-center gap-3 text-gray-700 dark:text-gray-200"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <SaveIcon size={20} />
+                      <span>Saved Workouts</span>
+                    </Link>
+
+                  )}
+                </div>
               </nav>
 
-              <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-                {session ? (
-                  <div className="space-y-4">
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Signed in as {session.user?.name || session.user?.email}
-                    </p>
-                    <button
-                      onClick={() => {
-                        signOut();
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
-                    >
-                      Logout
-                    </button>
-                  </div>
-                ) : (
-                  <div className="space-y-4">
-                    <button
-                      onClick={() => {
-                        setIsAuthModalOpen(true);
-                        setIsMobileMenuOpen(false);
-                      }}
-                      className="w-full text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors"
-                    >
-                      Sign in
-                    </button>
-                  </div>
-                )}
+              <div className="mt-auto px-4 pb-8 space-y-6">
+                <div className="space-y-3">
+                  <Link
+                    href="/terms"
+                    className="block text-sm text-gray-600 dark:text-gray-400"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Terms of Service
+                  </Link>
+                  <Link
+                    href="/privacy"
+                    className="block text-sm text-gray-600 dark:text-gray-400"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Privacy Policy
+                  </Link>
+                </div>
+
+                {session ?
+                  <button
+                    onClick={() => {
+                      signOut();
+                      setIsMobileMenuOpen(false);
+                    }}
+                    className="text-sm text-gray-600 dark:text-gray-400"
+                  >
+                    Logout
+                  </button>
+
+                : 
+                  <button
+                    onClick={() => setIsAuthModalOpen(true)}
+                    className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors max-sm:hidden"
+                  >
+                    Sign in
+                  </button>
+                  }
               </div>
             </div>
           </div>
         </div>
-      )}
+      )
+      }
       <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
-    </header>
+    </header >
   );
 } 
