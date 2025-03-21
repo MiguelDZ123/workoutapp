@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
     // Send email with OTP
     await resend.emails.send({
-      from: 'verification@yourdomain.com',
+      from: 'migui.manda1@gmail.com',
       to: email,
       subject: 'Verify your email',
       html: `

@@ -62,7 +62,7 @@ const EmailVerification: React.FC<EmailVerificationProps> = ({
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 py-8 px-4">
       <div className="text-center">
         <h2 className="text-xl font-semibold mb-2">Verify your email</h2>
         <p className="text-gray-600">

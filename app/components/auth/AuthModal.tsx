@@ -60,7 +60,13 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
           body: JSON.stringify(data),
         })
 
-        if (response.ok) {
+        const response2 = await fetch('/api/verify-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data )
+        })
+
+        if (response.ok && response2.ok) {
           setVerificationEmail(data.email)
           setShowVerification(true)
         } else {

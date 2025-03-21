@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { Search, Home, Zap, Target, Settings, User, Save, Menu, X, ChevronLeft, LayoutGrid, UserCog, AlertCircle, FileText, Smartphone, MessageSquare, SaveIcon, Banknote, BookOpenText } from "lucide-react";
-import { useCallback, useState } from 'react'
+import { SyntheticEvent, useCallback, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import AuthModal from '@/app/components/auth/AuthModal'
 import Image from 'next/image'
-import { BiMoney } from "react-icons/bi";
-import { CiMoneyBill } from "react-icons/ci";
 
-export default function Header() {
+export default function Header(this: any) {
   const { data: session, status } = useSession()
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -23,6 +21,10 @@ export default function Header() {
   const toggleMobileMenu = () => {
     setIsMobileMenuOpen(!isMobileMenuOpen)
   }
+
+  const addImageFallback = (event: SyntheticEvent<HTMLImageElement, Event>) => {
+    event.currentTarget.src = 'https://transplant.org.au/wp-content/uploads/2018/06/James-avatar-for-website.png';
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
@@ -74,7 +76,7 @@ export default function Header() {
               <div className="hidden md:block">
                 <div className="flex items-center gap-4">
                   <span className="text-sm text-gray-600 dark:text-gray-400">
-                    <img className="rounded-full h-8 w-8" src={`${session.user?.image}`}/>
+                    <img className="rounded-full h-8 w-8" src={`${session.user?.image}`} onError={addImageFallback}/>
                   </span>
                   <button
                     onClick={() => signOut()}
@@ -100,7 +102,7 @@ export default function Header() {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="text-sm bg-black text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition-colors max-sm:hidden"
+                className="text-sm bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors max-sm:hidden"
               >
                 Sign in
               </button>
@@ -217,7 +219,7 @@ export default function Header() {
                   Logout
                 </button>) : (<button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="text-sm text-gray-600 dark:text-gray-400"
+                  className="text-sm bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors w-full"
                 >
                   Sign in
                 </button>)}

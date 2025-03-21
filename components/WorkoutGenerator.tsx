@@ -52,45 +52,6 @@ export default function WorkoutGenerator() {
     setPrompt(template);
   };
 
-  // Mock function to generate workout plans
-  const generateWorkoutPlan = (userPrompt: string) => {
-    // This would be replaced with actual AI API call
-    const lowerPrompt = userPrompt.toLowerCase();
-
-    if (lowerPrompt.includes('beginner')) {
-      return `## Beginner Workout Plan\n\n### Monday - Full Body\n- Bodyweight Squats: 3 sets of 12 reps\n- Push-ups (or knee push-ups): 3 sets of 8-10 reps\n- Dumbbell Rows: 3 sets of 10 reps per arm\n- Plank: 3 sets, hold for 20-30 seconds\n\n### Wednesday - Cardio\n- 5 minute warm-up walk\n- 20 minutes of interval walking/jogging\n- 5 minute cool-down\n\n### Friday - Full Body\n- Lunges: 3 sets of 10 reps per leg\n- Dumbbell Shoulder Press: 3 sets of 10 reps\n- Glute Bridges: 3 sets of 12 reps\n- Bird-dogs: 3 sets of 8 reps per side`;
-    } else if (lowerPrompt.includes('weight loss') || lowerPrompt.includes('lose weight')) {
-      return `## Weight Loss Focused Workout Plan\n\n### Monday - HIIT\n- Warm-up: 5 minutes light cardio\n- Circuit (repeat 3 times):\n  - Jumping Jacks: 45 seconds\n  - Mountain Climbers: 45 seconds\n  - Burpees: 45 seconds\n  - Rest: 30 seconds\n- Cool-down: 5 minutes stretching\n\n### Tuesday - Strength\n- Goblet Squats: 3 sets of 15 reps\n- Push-ups: 3 sets of 12 reps\n- Dumbbell Rows: 3 sets of 12 reps per arm\n- Plank: 3 sets, hold for 45 seconds\n\n### Wednesday - Steady State Cardio\n- 30-45 minutes of walking, jogging, cycling, or swimming\n\n### Thursday - Rest or Light Activity\n\n### Friday - Full Body Circuit\n- Warm-up: 5 minutes\n- Circuit (repeat 3 times):\n  - Lunges: 12 reps per leg\n  - Dumbbell Shoulder Press: 12 reps\n  - Kettlebell Swings: 15 reps\n  - Bicycle Crunches: 20 reps\n  - Rest: 60 seconds\n\n### Saturday - Active Recovery\n- 30 minutes of yoga or light walking\n\n### Sunday - Rest`;
-    } else if (lowerPrompt.includes('muscle') || lowerPrompt.includes('strength') || lowerPrompt.includes('build')) {
-      return `## Muscle Building Workout Plan\n\n### Monday - Chest & Triceps\n- Bench Press: 4 sets of 8-10 reps\n- Incline Dumbbell Press: 3 sets of 10 reps\n- Chest Flyes: 3 sets of 12 reps\n- Tricep Pushdowns: 3 sets of 12 reps\n- Overhead Tricep Extensions: 3 sets of 12 reps\n\n### Tuesday - Back & Biceps\n- Deadlifts: 4 sets of 6-8 reps\n- Pull-ups or Lat Pulldowns: 4 sets of 8-10 reps\n- Barbell Rows: 3 sets of 10 reps\n- Barbell Curls: 3 sets of 10 reps\n- Hammer Curls: 3 sets of 12 reps\n\n### Wednesday - Rest or Light Cardio\n\n### Thursday - Legs\n- Squats: 4 sets of 8-10 reps\n- Romanian Deadlifts: 3 sets of 10 reps\n- Leg Press: 3 sets of 12 reps\n- Leg Extensions: 3 sets of 15 reps\n- Leg Curls: 3 sets of 15 reps\n- Calf Raises: 4 sets of 15-20 reps\n\n### Friday - Shoulders & Abs\n- Overhead Press: 4 sets of 8-10 reps\n- Lateral Raises: 3 sets of 12 reps\n- Face Pulls: 3 sets of 15 reps\n- Hanging Leg Raises: 3 sets of 12 reps\n- Planks: 3 sets of 45-60 seconds\n\n### Saturday - Active Recovery\n- Light cardio for 20-30 minutes\n\n### Sunday - Rest`;
-    } else {
-      return `## Custom Workout Plan\n\nBased on your request, here's a personalized workout plan:\n\n### Monday - Upper Body\n- Bench Press or Push-ups: 3 sets of 10-12 reps\n- Dumbbell Rows: 3 sets of 10-12 reps\n- Shoulder Press: 3 sets of 10-12 reps\n- Bicep Curls: 3 sets of 12 reps\n- Tricep Dips: 3 sets of 12 reps\n\n### Tuesday - Lower Body\n- Squats: 3 sets of 12 reps\n- Lunges: 3 sets of 10 reps per leg\n- Deadlifts: 3 sets of 10 reps\n- Calf Raises: 3 sets of 15 reps\n- Glute Bridges: 3 sets of 15 reps\n\n### Wednesday - Rest or Light Cardio\n\n### Thursday - Full Body\n- Dumbbell Thrusters: 3 sets of 12 reps\n- Renegade Rows: 3 sets of 10 reps per arm\n- Walking Lunges: 3 sets of 20 steps\n- Plank: 3 sets, hold for 45 seconds\n- Mountain Climbers: 3 sets of 20 reps\n\n### Friday - HIIT\n- 5 minute warm-up\n- 20 minutes of high-intensity interval training\n- 5 minute cool-down\n\n### Saturday - Active Recovery\n- Light walking, yoga, or stretching\n\n### Sunday - Rest`;
-    }
-  };
-
-  const features = [
-    {
-      title: "Personalized Plans",
-      description: "Get workouts tailored to your fitness level and goals",
-      icon: "💪"
-    },
-    {
-      title: "Nutrition Tips",
-      description: "Receive dietary suggestions to complement your workouts",
-      icon: "🥗"
-    },
-    {
-      title: "Progress Tracking",
-      description: "Track your fitness journey with detailed metrics",
-      icon: "📈"
-    },
-    {
-      title: "Exercise Library",
-      description: "Access a vast database of exercises with proper form guides",
-      icon: "📚"
-    }
-  ];
-
   const quickPrompts = [
     "I'm a beginner looking to build strength with minimal equipment at home.",
     "I want to lose weight and have access to a full gym.",
