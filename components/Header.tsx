@@ -60,26 +60,8 @@ export default function Header() {
           </div>
           
           {/* Mobile menu button */}
-          <button 
-            onClick={toggleMobileMenu}
-            className="md:hidden p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-          >
-            {isMobileMenuOpen ? (
-              <X size={20} className="text-gray-700 dark:text-gray-300" />
-            ) : (
-              <Menu size={20} className="text-gray-700 dark:text-gray-300" />
-            )}
-          </button>
 
           {/* Desktop settings button */}
-          <div className="hidden md:block">
-            <Link 
-              href="/settings" 
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-            >
-              <Settings size={20} className="text-gray-700 dark:text-gray-300" />
-            </Link>
-          </div>
           
           {status === 'loading' ? (
             <div className="h-9 w-24 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse" />
