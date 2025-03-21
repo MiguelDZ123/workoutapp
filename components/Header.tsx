@@ -129,7 +129,7 @@ export default function Header(this: any) {
             onClick={() => setIsMobileMenuOpen(false)}
           />
 
-          <div className="fixed inset-y-0 left-0 w-full max-w-sm bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
+          <div className="absolute inset-y-0 left-0 w-full max-w-lg bg-gradient-to-b from-purple-50 to-pink-50 dark:from-gray-900 dark:to-gray-800">
             <div className="flex flex-col h-full">
               <div className="flex items-center gap-3 px-4 py-4 border-b border-gray-200 dark:border-gray-700">
                 <button
@@ -219,7 +219,7 @@ export default function Header(this: any) {
                   Logout
                 </button>) : (<button
                   onClick={() => setIsAuthModalOpen(true)}
-                  className="text-sm bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors w-full"
+                  className="text-sm text-gray-600 dark:text-gray-400"
                 >
                   Sign in
                 </button>)}
