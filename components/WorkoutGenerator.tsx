@@ -109,44 +109,7 @@ export default function WorkoutGenerator() {
 
       {/* Form Section */}
       <form onSubmit={handleSubmit} className="w-full mt-4">
-        {!currentWorkout && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-2">
-            <div>
-              <label htmlFor="fitness-level" className="block text-sm font-medium mb-1">
-                Fitness Level
-              </label>
-              <select
-                id="fitness-level"
-                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-                value={fitnessLevel}
-                onChange={(e) => setFitnessLevel(e.target.value)}
-              >
-                <option value="">Select your level</option>
-                <option value="beginner">Beginner</option>
-                <option value="intermediate">Intermediate</option>
-                <option value="advanced">Advanced</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="workout-goal" className="block text-sm font-medium mb-1">
-                Primary Goal
-              </label>
-              <select
-                id="workout-goal"
-                className="w-full p-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800"
-                value={workoutGoal}
-                onChange={(e) => setWorkoutGoal(e.target.value)}
-              >
-                <option value="">Select your goal</option>
-                <option value="weight-loss">Weight Loss</option>
-                <option value="muscle-gain">Muscle Gain</option>
-                <option value="endurance">Endurance</option>
-                <option value="strength">Strength</option>
-                <option value="flexibility">Flexibility</option>
-              </select>
-            </div>
-          </div>
-        )}
+        
 
         <div className="relative w-full">
           <div className="flex items-center w-full rounded-full ... border mt-8 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">

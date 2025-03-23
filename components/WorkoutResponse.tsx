@@ -1,12 +1,54 @@
 import { useState } from 'react';
-import { Download, ThumbsUp, ThumbsDown, Share2, ChevronDown, ChevronUp, Dumbbell, Calendar, Clock, ArrowUpRight, AlertCircle, Save } from 'lucide-react';
+import { 
+  Download, 
+  ThumbsUp, 
+  ThumbsDown, 
+  Share2, 
+  ChevronDown, 
+  ChevronUp, 
+  Dumbbell, 
+  Calendar, 
+  Clock, 
+  ArrowUpRight, 
+  AlertCircle, 
+  Save,
+  Target,
+  Flame,
+  Timer,
+  Apple,
+  ScrollText,
+  BarChart
+} from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import jsPDF from 'jspdf';
 import { toast } from 'react-hot-toast';
 import { useSession } from 'next-auth/react';
+import WorkoutPlanDisplay from './WorkoutPlanDisplay';
+
+interface Exercise {
+  name: string;
+  sets: number;
+  reps: string;
+  rest: string;
+}
+
+interface DayWorkout {
+  focus: string;
+  exercises: Exercise[];
+  notes: string;
+}
+
+interface WorkoutPlan {
+  title: string;
+  overview: string;
+  weeklySchedule: {
+    [key: string]: DayWorkout;
+  };
+  nutritionTips: string[];
+}
 
 interface WorkoutResponseProps {
-  content: string;
+  content: WorkoutPlan;
 }
 
 export default function WorkoutResponse({ content }: WorkoutResponseProps) {
@@ -15,56 +57,11 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
   const [activeDay, setActiveDay] = useState<number>(1);
   const [isDownloading, setIsDownloading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [expandedDay, setExpandedDay] = useState<string | null>(null);
 
-  // Parse the workout content into structured data
-  const parseWorkoutContent = (content: string) => {
-    const sections = content.split('\n\n');
-    const workoutPlan = {
-      title: '',
-      overview: '',
-      days: [] as any[],
-      nutrition: '',
-      tips: ''
-    };
-
-    let currentDay: any = null;
-    
-    sections.forEach(section => {
-      if (section.includes('# ')) {
-        workoutPlan.title = section.replace('# ', '').trim();
-      } else if (section.toLowerCase().includes('day')) {
-        currentDay = {
-          title: section.split('\n')[0].trim(),
-          exercises: [],
-          notes: ''
-        };
-        
-        const lines = section.split('\n').slice(1);
-        lines.forEach(line => {
-          if (line.startsWith('-')) {
-            const exercise = line.replace('- ', '').trim();
-            currentDay.exercises.push(exercise);
-          } else if (line.trim() !== '') {
-            currentDay.notes += line.trim() + '\n';
-          }
-        });
-        
-        if (currentDay) {
-          workoutPlan.days.push(currentDay);
-        }
-      } else if (section.toLowerCase().includes('nutrition')) {
-        workoutPlan.nutrition = section.split('\n').slice(1).join('\n').trim();
-      } else if (section.toLowerCase().includes('tips') || section.toLowerCase().includes('guidelines')) {
-        workoutPlan.tips = section.split('\n').slice(1).join('\n').trim();
-      } else if (!workoutPlan.overview && section.trim()) {
-        workoutPlan.overview = section.trim();
-      }
-    });
-
-    return workoutPlan;
+  const toggleDay = (day: string) => {
+    setExpandedDay(expandedDay === day ? null : day);
   };
-
-  const workoutPlan = parseWorkoutContent(content);
 
   const handleSave = async () => {
     if (!session) {
@@ -80,8 +77,8 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          title: workoutPlan.title || 'Custom Workout Plan',
-          content,
+          title: content.title || 'Custom Workout Plan',
+          content: JSON.stringify(content),
         }),
       });
 
@@ -128,17 +125,17 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
       };
 
       // Add Title
-      yPosition = addWrappedText(workoutPlan.title || 'Personalized Workout Plan', yPosition, titleFont, true);
+      yPosition = addWrappedText(content.title || 'Personalized Workout Plan', yPosition, titleFont, true);
       yPosition += lineHeight;
 
       // Add Overview
-      if (workoutPlan.overview) {
-        yPosition = addWrappedText(workoutPlan.overview, yPosition, normalFont);
+      if (content.overview) {
+        yPosition = addWrappedText(content.overview, yPosition, normalFont);
         yPosition += lineHeight;
       }
 
       // Add Workout Days
-      workoutPlan.days.forEach((day, index) => {
+      Object.entries(content.weeklySchedule).forEach(([day, dayWorkout]) => {
         // Check if we need a new page
         if (yPosition > pdf.internal.pageSize.height - 50) {
           pdf.addPage();
@@ -146,18 +143,18 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
         }
 
         // Add Day Title
-        yPosition = addWrappedText(day.title, yPosition, headingFont, true);
+        yPosition = addWrappedText(day, yPosition, headingFont, true);
         yPosition += lineHeight/2;
 
         // Add Exercises
-        day.exercises.forEach((exercise: string, exerciseIndex: number) => {
+        dayWorkout.exercises.forEach((exercise: Exercise, exerciseIndex: number) => {
           // Check if we need a new page
           if (yPosition > pdf.internal.pageSize.height - 50) {
             pdf.addPage();
             yPosition = margin;
           }
           
-          const exerciseText = `${exerciseIndex + 1}. ${exercise}`;
+          const exerciseText = `${exerciseIndex + 1}. ${exercise.name} - ${exercise.sets} sets × ${exercise.reps}`;
           yPosition = addWrappedText(exerciseText, yPosition, normalFont);
           yPosition += lineHeight/2;
         });
@@ -166,30 +163,19 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
       });
 
       // Add Tips Section
-      if (workoutPlan.tips) {
+      if (content.nutritionTips.length > 0) {
         // Check if we need a new page
         if (yPosition > pdf.internal.pageSize.height - 100) {
           pdf.addPage();
           yPosition = margin;
         }
 
-        yPosition = addWrappedText('Tips & Guidelines', yPosition, headingFont, true);
+        yPosition = addWrappedText('Nutrition Tips', yPosition, headingFont, true);
         yPosition += lineHeight/2;
-        yPosition = addWrappedText(workoutPlan.tips, yPosition, smallFont);
-        yPosition += lineHeight;
-      }
-
-      // Add Nutrition Section
-      if (workoutPlan.nutrition) {
-        // Check if we need a new page
-        if (yPosition > pdf.internal.pageSize.height - 100) {
-          pdf.addPage();
-          yPosition = margin;
-        }
-
-        yPosition = addWrappedText('Nutrition Recommendations', yPosition, headingFont, true);
-        yPosition += lineHeight/2;
-        yPosition = addWrappedText(workoutPlan.nutrition, yPosition, smallFont);
+        content.nutritionTips.forEach((tip, index) => {
+          yPosition = addWrappedText(tip, yPosition, smallFont);
+          yPosition += lineHeight;
+        });
       }
 
       // Add footer with date
@@ -204,11 +190,11 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
       console.error('Error generating PDF:', error);
       toast.error('Failed to generate PDF. Downloading as text instead.');
       // Fallback to text download
-      const blob = new Blob([content], { type: 'text/plain' });
+      const blob = new Blob([JSON.stringify(content)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'workout-plan.txt';
+      a.download = 'workout-plan.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -219,93 +205,89 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-700 overflow-hidden sticky top-4 h-[calc(100vh-200px)]">
-      <div className="flex flex-col h-full">
-        <div className="bg-green-50 dark:bg-green-900/20 p-4 border-b border-green-100 dark:border-green-800">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="font-semibold text-lg flex items-center gap-2">
-              <Dumbbell className="text-green-600 dark:text-green-400" size={20} />
-              Your Workout Plan
-            </h3>
-            <div className="flex items-center gap-2">
-              {session && (
-                <button
-                  onClick={handleSave}
-                  disabled={isSaving}
-                  className="p-2 rounded-full hover:bg-green-100 dark:hover:bg-green-800 transition-colors text-green-600 dark:text-green-400"
-                  title="Save workout"
-                >
-                  <Save size={18} className={isSaving ? 'animate-pulse' : ''} />
-                </button>
-              )}
-              <button 
-                onClick={() => setIsExpanded(!isExpanded)}
-                className="p-1 rounded-full hover:bg-green-100 dark:hover:bg-green-800 transition-colors"
-              >
-                {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </button>
-            </div>
-          </div>
-          
-          <div className="flex flex-wrap gap-3">
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-              <Calendar size={14} className="text-green-500" />
-              <span>{workoutPlan.days.length}-Day Plan</span>
-            </div>
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-              <Clock size={14} className="text-green-500" />
-              <span>With Rest Periods</span>
-            </div>
-            <div className="bg-white dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1.5">
-              <ArrowUpRight size={14} className="text-green-500" />
-              <span>Progressive</span>
-            </div>
-          </div>
+    <div className="space-y-6">
+      <div className="bg-white dark:bg-gray-800 rounded-lg border-gray-50 p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <h1 className="text-2xl font-bold">{content.title}</h1>
         </div>
-        
-        <div className="flex-1 overflow-auto">
-          {isExpanded && (
-            <div className="p-4">
-              <div className="prose prose-sm dark:prose-invert max-w-none">
-                <ReactMarkdown>{content}</ReactMarkdown>
-              </div>
-            </div>
-          )}
+        <div className="flex items-start gap-2">
+          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
+          <p className="text-gray-600 dark:text-gray-300">{content.overview}</p>
         </div>
-        
-        <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
-          <div className="flex flex-wrap gap-2">
-            <button 
-              onClick={handleDownload}
-              disabled={isDownloading}
-              className="inline-flex items-center gap-1 text-xs bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 px-3 py-1.5 rounded-full hover:bg-green-200 dark:hover:bg-green-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {Object.entries(content.weeklySchedule).map(([day, dayWorkout]) => (
+          <div key={day} className="bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
+            <button
+              onClick={() => toggleDay(day)}
+              className="w-full flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700"
             >
-              {isDownloading ? (
-                <>
-                  <div className="w-3 h-3 border-2 border-green-700 border-t-transparent rounded-full animate-spin" />
-                  <span>Generating PDF...</span>
-                </>
+              <div className="flex items-center gap-3">
+                <div>
+                  <h3 className="text-lg font-semibold capitalize">{day}</h3>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                    <span>{dayWorkout.focus}</span>
+                  </div>
+                </div>
+              </div>
+              {expandedDay === day ? (
+                <ChevronUp className="w-5 h-5 text-gray-500" />
               ) : (
-                <>
-                  <Download size={14} />
-                  <span>Download PDF</span>
-                </>
+                <ChevronDown className="w-5 h-5 text-gray-500" />
               )}
             </button>
-            <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-              <ThumbsUp size={14} />
-              Helpful
-            </button>
-            <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-              <ThumbsDown size={14} />
-              Not helpful
-            </button>
-            <button className="inline-flex items-center gap-1 text-xs bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
-              <Share2 size={14} />
-              Share
-            </button>
+
+            {expandedDay === day && (
+              <div className="p-4">
+                <div className="space-y-4">
+                  {dayWorkout.exercises.map((exercise, index) => (
+                    <div key={index} className="border-b border-gray-200 dark:border-gray-700 last:border-0 pb-4 last:pb-0">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <Dumbbell className="w-4 h-4 text-green-500" />
+                            <h4 className="font-medium">{exercise.name}</h4>
+                          </div>
+                          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                            <BarChart className="w-4 h-4 text-blue-500" />
+                            <span>{exercise.sets} sets × {exercise.reps}</span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+                          <Timer className="w-4 h-4 text-purple-500" />
+                          <span>{exercise.rest}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                {dayWorkout.notes && (
+                  <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="flex items-start gap-2">
+                      <ScrollText className="w-4 h-4 text-gray-400 mt-0.5" />
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{dayWorkout.notes}</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
+        ))}
+      </div>
+
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6">
+        <div className="flex items-center gap-2 mb-4">
+          <h2 className="text-xl font-semibold">Nutrition Tips</h2>
         </div>
+        <ul className="list-none space-y-3">
+          {content.nutritionTips.map((tip, index) => (
+            <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
+              <ArrowUpRight className="w-4 h-4 text-green-500 mt-1" />
+              <span>{tip}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );
