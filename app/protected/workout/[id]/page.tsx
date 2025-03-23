@@ -3,10 +3,10 @@
 import { useEffect, useState } from 'react';
 import Layout from "@/components/Layout";
 import { useSession } from 'next-auth/react';
-import { 
-  Loader2, 
-  ArrowLeft, 
-  Trash2, 
+import {
+  Loader2,
+  ArrowLeft,
+  Trash2,
   Target,
   AlertCircle,
   Dumbbell,
@@ -17,7 +17,8 @@ import {
   ChevronDown,
   ChevronUp,
   Download,
-  Clock
+  Clock,
+  FileDown
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -122,11 +123,11 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
 
   const handleDownload = async () => {
     if (!workoutPlan) return;
-    
+
     setIsDownloading(true);
     try {
       const pdf = new jsPDF();
-      
+
       // PDF Styling
       const titleFont = 16;
       const headingFont = 14;
@@ -145,7 +146,7 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
         } else {
           pdf.setFont('helvetica', 'normal');
         }
-        
+
         const splitText = pdf.splitTextToSize(text, pageWidth - 2 * margin);
         pdf.text(splitText, margin, y);
         return y + (splitText.length * lineHeight);
@@ -168,17 +169,17 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
         }
 
         yPosition = addWrappedText(day, yPosition, headingFont, true);
-        yPosition += lineHeight/2;
+        yPosition += lineHeight / 2;
 
         dayWorkout.exercises.forEach((exercise, index) => {
           if (yPosition > pdf.internal.pageSize.height - 50) {
             pdf.addPage();
             yPosition = margin;
           }
-          
+
           const exerciseText = `${index + 1}. ${exercise.name} - ${exercise.sets} sets × ${exercise.reps}`;
           yPosition = addWrappedText(exerciseText, yPosition, normalFont);
-          yPosition += lineHeight/2;
+          yPosition += lineHeight / 2;
         });
 
         yPosition += lineHeight;
@@ -192,7 +193,7 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
         }
 
         yPosition = addWrappedText('Nutrition Tips', yPosition, headingFont, true);
-        yPosition += lineHeight/2;
+        yPosition += lineHeight / 2;
         workoutPlan.nutritionTips.forEach((tip, index) => {
           yPosition = addWrappedText(tip, yPosition, smallFont);
           yPosition += lineHeight;
@@ -260,44 +261,29 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
         <div className="bg-white dark:bg-gray-800 rounded-lg border-gray-50 p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
-              <Target className="w-6 h-6 text-green-500" />
               <h1 className="text-2xl font-bold">{workoutPlan.title}</h1>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                onClick={handleDelete}
-                disabled={isDeleting}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isDeleting ? (
-                  <>
-                    <Clock className="w-4 h-4 animate-spin" />
-                    Deleting...
-                  </>
-                ) : (
-                  <>
-                    <Trash2 className="w-4 h-4" />
-                    Delete Workout
-                  </>
-                )}
-              </button>
-              <button
-                onClick={handleDownload}
-                disabled={isDownloading}
-                className="flex items-center gap-2 px-4 py-2 text-sm bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isDownloading ? (
-                  <>
-                    <Clock className="w-4 h-4 animate-spin" />
-                    Downloading...
-                  </>
-                ) : (
-                  <>
-                    <Download className="w-4 h-4" />
-                    Download PDF
-                  </>
-                )}
-              </button>
+              {isDeleting ? (
+                <>
+                  <Clock className="w-4 h-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <button onClick={handleDelete} disabled={isDeleting}><Trash2 className="w-4 h-4" /></button>
+                </>
+              )}
+              {isDownloading ? (
+                <>
+                  <Clock className="w-4 h-4 animate-spin" />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <button onClick={handleDownload} disabled={isDownloading}><FileDown className="w-4 h-4" /></button>
+                </>
+              )}
             </div>
           </div>
           <div className="flex items-start gap-2">
