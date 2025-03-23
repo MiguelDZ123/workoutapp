@@ -1,23 +1,24 @@
 import { useState } from 'react';
-import { 
-  Download, 
-  ThumbsUp, 
-  ThumbsDown, 
-  Share2, 
-  ChevronDown, 
-  ChevronUp, 
-  Dumbbell, 
-  Calendar, 
-  Clock, 
-  ArrowUpRight, 
-  AlertCircle, 
+import {
+  Download,
+  ThumbsUp,
+  ThumbsDown,
+  Share2,
+  ChevronDown,
+  ChevronUp,
+  Dumbbell,
+  Calendar,
+  Clock,
+  ArrowUpRight,
+  AlertCircle,
   Save,
   Target,
   Flame,
   Timer,
   Apple,
   ScrollText,
-  BarChart
+  BarChart,
+  FileDown
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import jsPDF from 'jspdf';
@@ -99,7 +100,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
     setIsDownloading(true);
     try {
       const pdf = new jsPDF();
-      
+
       // PDF Styling
       const titleFont = 16;
       const headingFont = 14;
@@ -118,7 +119,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
         } else {
           pdf.setFont('helvetica', 'normal');
         }
-        
+
         const splitText = pdf.splitTextToSize(text, pageWidth - 2 * margin);
         pdf.text(splitText, margin, y);
         return y + (splitText.length * lineHeight);
@@ -144,7 +145,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
 
         // Add Day Title
         yPosition = addWrappedText(day, yPosition, headingFont, true);
-        yPosition += lineHeight/2;
+        yPosition += lineHeight / 2;
 
         // Add Exercises
         dayWorkout.exercises.forEach((exercise: Exercise, exerciseIndex: number) => {
@@ -153,10 +154,10 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
             pdf.addPage();
             yPosition = margin;
           }
-          
+
           const exerciseText = `${exerciseIndex + 1}. ${exercise.name} - ${exercise.sets} sets × ${exercise.reps}`;
           yPosition = addWrappedText(exerciseText, yPosition, normalFont);
-          yPosition += lineHeight/2;
+          yPosition += lineHeight / 2;
         });
 
         yPosition += lineHeight;
@@ -171,7 +172,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
         }
 
         yPosition = addWrappedText('Nutrition Tips', yPosition, headingFont, true);
-        yPosition += lineHeight/2;
+        yPosition += lineHeight / 2;
         content.nutritionTips.forEach((tip, index) => {
           yPosition = addWrappedText(tip, yPosition, smallFont);
           yPosition += lineHeight;
@@ -207,8 +208,34 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg border-gray-50 p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <h1 className="text-2xl font-bold">{content.title}</h1>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-bold">{content.title}</h1>
+          </div>
+          {session &&
+            <div className="flex items-center gap-2">
+              {isSaving ? (
+                <>
+                  <Clock className="w-4 h-4 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <button onClick={handleSave} disabled={isSaving}><Save className="w-4 h-4" /></button>
+                </>
+              )}
+              {isDownloading ? (
+                <>
+                  <Clock className="w-4 h-4 animate-spin" />
+                  Downloading...
+                </>
+              ) : (
+                <>
+                  <button onClick={handleDownload} disabled={isDownloading}><FileDown className="w-4 h-4" /></button>
+                </>
+              )}
+            </div>
+          }
         </div>
         <div className="flex items-start gap-2">
           <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />

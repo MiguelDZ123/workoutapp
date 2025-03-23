@@ -135,11 +135,9 @@ export default function WorkoutGenerator() {
       )}
 
       {/* Form Section */}
-      <form onSubmit={handleSubmit} className="w-full mt-4">
-        
-
+      <form onSubmit={handleSubmit} className="w-full">
         <div className="relative w-full">
-          <div className="flex items-center w-full rounded-full ... border mt-8 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
+          <div className="flex items-center w-full rounded-full ... border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
             <button
               type="button"
               className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
