@@ -166,7 +166,7 @@ export default function WorkoutGenerator() {
           {/* Form Section */}
           <form onSubmit={handleSubmit} className="w-full">
             <div className="relative w-full">
-              <div className="flex items-center w-full rounded-full ... border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
+              <div className="flex shrink items-center w-full rounded-full ... border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
                 <button
                   type="button"
                   className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
@@ -176,7 +176,7 @@ export default function WorkoutGenerator() {
                 <button
                   type="button"
                   className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-                  onTouchStart={(event) => SpeechRecognition.startListening()}
+                  onClick={(event) => SpeechRecognition.startListening()}
                 >
                   <Mic className="w-5 h-5" />
                 </button>
@@ -195,9 +195,9 @@ export default function WorkoutGenerator() {
                   </span>
 
                   {session ? (
-                    <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
+                    <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579]text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
                   ) : (
-                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span>Sign in</span></button>
+                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /></button>
                   )}
                 </div>
               </div>
