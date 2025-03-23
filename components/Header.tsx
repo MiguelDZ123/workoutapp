@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { Search, Menu, X, ChevronLeft, LayoutGrid, SaveIcon, Banknote, BookOpenText } from "lucide-react";
+import { Search, Menu, X, ChevronLeft, LayoutGrid, SaveIcon, Banknote, BookOpenText, LogOut, PersonStanding } from "lucide-react";
 import { SyntheticEvent, useCallback, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import AuthModal from '@/app/components/auth/AuthModal'
@@ -82,7 +82,7 @@ export default function Header(this: any) {
                     onClick={() => signOut()}
                     className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                   >
-                    Logout
+                    <LogOut className="text-[#0fa579]"/>
                   </button>
                 </div>
               </div>
@@ -102,7 +102,7 @@ export default function Header(this: any) {
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setIsAuthModalOpen(true)}
-                className="text-sm bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition-colors max-sm:hidden"
+                className="text-sm bg-[#0fa579] text-white px-4 py-2 rounded-lg transition-colors max-sm:hidden"
               >
                 Sign in
               </button>

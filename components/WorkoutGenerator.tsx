@@ -5,6 +5,8 @@ import { Send, Info, Dumbbell, Calendar, ArrowRight, Paperclip, Mic, LogIn } fro
 import WorkoutResponse from './WorkoutResponse';
 import { useSession } from 'next-auth/react';
 import AuthModal from '../app/components/auth/AuthModal'
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition'
+
 
 export default function WorkoutGenerator() {
   const [prompt, setPrompt] = useState('');
@@ -15,6 +17,15 @@ export default function WorkoutGenerator() {
   const { data: session, status } = useSession()
   const [error, setError] = useState<string | null>(null);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  const {
+    transcript,
+    browserSupportsSpeechRecognition
+  } = useSpeechRecognition();
+
+  if (!browserSupportsSpeechRecognition) {
+    return <span>Browser doesn't support speech recognition.</span>;
+  }
 
   const toggleAuthModal = useCallback(() => {
     if (!session) {
@@ -165,16 +176,18 @@ export default function WorkoutGenerator() {
                 <button
                   type="button"
                   className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                  onTouchStart={(event) => SpeechRecognition.startListening()}
                 >
                   <Mic className="w-5 h-5" />
                 </button>
                 <textarea
                   className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
                   placeholder="Describe your fitness goals, experience level, available equipment..."
-                  value={prompt}
+                  value={prompt || transcript}
                   onChange={(e) => setPrompt(e.target.value)}
                   maxLength={3000}
                   rows={1}
+                  disabled={!session}
                 />
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-400">
@@ -184,7 +197,7 @@ export default function WorkoutGenerator() {
                   {session ? (
                     <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
                   ) : (
-                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span>Sign in</span></button>
+                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span>Sign in</span></button>
                   )}
                 </div>
               </div>

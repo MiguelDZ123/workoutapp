@@ -269,7 +269,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                   <button
                     type="button"
                     onClick={() => toast.error('Feature coming soon!')}
-                    className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                    className="text-sm font-medium text-[#0fa579] hover:text-[#0fa579]"
                   >
                     Forgot password?
                   </button>
@@ -279,7 +279,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-blue-600 text-white py-2.5 rounded-lg hover:bg-blue-700 transition disabled:opacity-50"
+                className="w-full bg-[#0fa579] text-white py-2.5 rounded-lg hover:bg-[#0fa579] transition disabled:opacity-50"
               >
                 {variant === VARIANT.LOGIN ? 'Sign in' : 'Create account'}
               </button>
@@ -289,7 +289,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               {variant === VARIANT.LOGIN ? "Don't have an account?" : "Already have an account?"}{' '}
               <button
                 onClick={toggleVariant}
-                className="font-medium text-blue-600 hover:text-blue-500"
+                className="font-medium text-[#0fa579] hover:text-[#0fa579]"
               >
                 {variant === VARIANT.LOGIN ? 'Create account' : 'Sign in'}
               </button>
