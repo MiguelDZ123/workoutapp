@@ -80,9 +80,9 @@ export default function Header(this: any) {
                   </span>
                   <button
                     onClick={() => signOut()}
-                    className="text-sm text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
+                    className="text-sm bg-[#0fa579] text-white px-4 py-2 rounded-lg transition-colors max-sm:hidden"
                   >
-                    <LogOut className="text-[#0fa579]"/>
+                    Log out
                   </button>
                 </div>
               </div>

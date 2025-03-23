@@ -238,7 +238,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
           }
         </div>
         <div className="flex items-start gap-2">
-          <p className="text-gray-600 dark:text-gray-300">{content.overview}</p>
+          <p className="text-gray-600 dark:text-gray-300">{content.overview}<span className='font-bold text-black-400'> Make sure you always consult a health professional before attempting these workouts or nutrition tips.</span></p>
         </div>
       </div>
 
@@ -313,7 +313,6 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
           ))}
         </ul>
       </div>
-      <span className='font-bold text-red-400'>Make sure you always consult a health professional before attempting these workouts or nutrition tips.</span>
     </div>
   );
 } 

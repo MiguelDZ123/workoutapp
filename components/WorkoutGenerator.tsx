@@ -182,7 +182,7 @@ export default function WorkoutGenerator() {
                 </button>
                 <textarea
                   className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
-                  placeholder="Describe your fitness goals, experience level, available equipment..."
+                  placeholder={!session ? ("Must be signed in to use this input") : ("Describe your fitness goals, experience level, available equipment...")}
                   value={prompt || transcript}
                   onChange={(e) => setPrompt(e.target.value)}
                   maxLength={3000}
@@ -195,9 +195,9 @@ export default function WorkoutGenerator() {
                   </span>
 
                   {session ? (
-                    <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579]text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
+                    <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
                   ) : (
-                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /></button>
+                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-lg bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span className='max-sm:hidden'>Sign in</span></button>
                   )}
                 </div>
               </div>
