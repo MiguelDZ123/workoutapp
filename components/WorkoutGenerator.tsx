@@ -1,8 +1,10 @@
 'use client';
 
-import { useState } from 'react';
-import { Send, Info, Dumbbell, Calendar, ArrowRight, Paperclip, Mic } from 'lucide-react';
+import { useCallback, useState } from 'react';
+import { Send, Info, Dumbbell, Calendar, ArrowRight, Paperclip, Mic, LogIn } from 'lucide-react';
 import WorkoutResponse from './WorkoutResponse';
+import { useSession } from 'next-auth/react';
+import AuthModal from '../app/components/auth/AuthModal'
 
 export default function WorkoutGenerator() {
   const [prompt, setPrompt] = useState('');
@@ -10,7 +12,15 @@ export default function WorkoutGenerator() {
   const [isGenerating, setIsGenerating] = useState(false);
   const [fitnessLevel, setFitnessLevel] = useState('');
   const [workoutGoal, setWorkoutGoal] = useState('');
+  const { data: session, status } = useSession()
   const [error, setError] = useState<string | null>(null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
+
+  const toggleAuthModal = useCallback(() => {
+    if (!session) {
+      setIsAuthModalOpen((value) => !value)
+    }
+  }, [session])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,7 +83,7 @@ export default function WorkoutGenerator() {
     };
     nutritionTips: string[];
   }
-  
+
 
   interface WorkoutResponseProps {
     content: WorkoutPlan;
@@ -91,6 +101,18 @@ export default function WorkoutGenerator() {
       {!currentWorkout ? (
         // Initial features view
         <>
+          <div>
+            <AuthModal isOpen={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
+            <div className="text-center mb-4">
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full mb-3">
+                AI-Powered Fitness
+              </span>
+              <h1 className="text-4xl font-bold mb-4">Fitness Plan Generator</h1>
+              <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
+                Tell us about your objectives and fitness requirements, and our generator will design a customized exercise schedule appropriate only for you.
+              </p>
+            </div>
+          </div>
           <div className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 p-6 rounded-lg border border-green-100 dark:border-green-800">
             <h3 className="text-lg font-semibold mb-3 flex items-center gap-2">
               <Info size={18} className="text-green-500" />
@@ -129,50 +151,49 @@ export default function WorkoutGenerator() {
               ))}
             </div>
           </div>
+
+          {/* Form Section */}
+          <form onSubmit={handleSubmit} className="w-full">
+            <div className="relative w-full">
+              <div className="flex items-center w-full rounded-full ... border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
+                <button
+                  type="button"
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                >
+                  <Paperclip className="w-5 h-5" />
+                </button>
+                <button
+                  type="button"
+                  className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
+                >
+                  <Mic className="w-5 h-5" />
+                </button>
+                <textarea
+                  className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
+                  placeholder="Describe your fitness goals, experience level, available equipment..."
+                  value={prompt}
+                  onChange={(e) => setPrompt(e.target.value)}
+                  maxLength={3000}
+                  rows={1}
+                />
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-gray-400">
+                    {prompt.length}/3000
+                  </span>
+
+                  {session ? (
+                    <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
+                  ) : (
+                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span>Sign in</span></button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
         </>
       ) : (
         <WorkoutResponse content={currentWorkout as unknown as WorkoutPlan} />
       )}
-
-      {/* Form Section */}
-      <form onSubmit={handleSubmit} className="w-full">
-        <div className="relative w-full">
-          <div className="flex items-center w-full rounded-full ... border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm px-4 py-2">
-            <button
-              type="button"
-              className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-            >
-              <Paperclip className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              className="p-1 text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
-            >
-              <Mic className="w-5 h-5" />
-            </button>
-            <textarea
-              className="flex-grow bg-transparent border-none resize-none min-h-[24px] max-h-[120px] focus:outline-none focus:ring-0 py-1 px-3 text-sm"
-              placeholder="Describe your fitness goals, experience level, available equipment..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              maxLength={3000}
-              rows={1}
-            />
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-gray-400">
-                {prompt.length}/3000
-              </span>
-              <button
-                type="submit"
-                className="ml-2 p-2 rounded-full bg-green-500 text-white hover:bg-green-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={!prompt.trim() || isGenerating}
-              >
-                <Send className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </form>
     </div>
   );
 } 

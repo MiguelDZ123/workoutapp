@@ -1,7 +1,7 @@
 'use client'
 
 import Link from "next/link";
-import { Search, Home, Zap, Target, Settings, User, Save, Menu, X, ChevronLeft, LayoutGrid, UserCog, AlertCircle, FileText, Smartphone, MessageSquare, SaveIcon, Banknote, BookOpenText } from "lucide-react";
+import { Search, Menu, X, ChevronLeft, LayoutGrid, SaveIcon, Banknote, BookOpenText } from "lucide-react";
 import { SyntheticEvent, useCallback, useState } from 'react'
 import { signOut, useSession } from 'next-auth/react'
 import AuthModal from '@/app/components/auth/AuthModal'

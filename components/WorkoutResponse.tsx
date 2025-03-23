@@ -238,7 +238,6 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
           }
         </div>
         <div className="flex items-start gap-2">
-          <AlertCircle className="w-5 h-5 text-red-500 mt-0.5" />
           <p className="text-gray-600 dark:text-gray-300">{content.overview}</p>
         </div>
       </div>
@@ -251,7 +250,7 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
               className="w-full flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-center gap-3">
-                <div>
+                <div className='justify-items-start'>
                   <h3 className="text-lg font-semibold capitalize">{day}</h3>
                   <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                     <span>{dayWorkout.focus}</span>
@@ -273,7 +272,6 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
                       <div className="flex items-start justify-between">
                         <div>
                           <div className="flex items-center gap-2 mb-1">
-                            <Dumbbell className="w-4 h-4 text-green-500" />
                             <h4 className="font-medium">{exercise.name}</h4>
                           </div>
                           <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
@@ -292,7 +290,6 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
                 {dayWorkout.notes && (
                   <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
                     <div className="flex items-start gap-2">
-                      <ScrollText className="w-4 h-4 text-gray-400 mt-0.5" />
                       <p className="text-sm text-gray-600 dark:text-gray-400">{dayWorkout.notes}</p>
                     </div>
                   </div>
@@ -310,12 +307,13 @@ export default function WorkoutResponse({ content }: WorkoutResponseProps) {
         <ul className="list-none space-y-3">
           {content.nutritionTips.map((tip, index) => (
             <li key={index} className="flex items-start gap-2 text-gray-600 dark:text-gray-300">
-              <ArrowUpRight className="w-4 h-4 text-green-500 mt-1" />
+              <ArrowUpRight className="w-4 h-4 text-black-500 mt-1" />
               <span>{tip}</span>
             </li>
           ))}
         </ul>
       </div>
+      <span className='font-bold text-red-400'>Make sure you always consult a health professional before attempting these workouts or nutrition tips.</span>
     </div>
   );
 } 
