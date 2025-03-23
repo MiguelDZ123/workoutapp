@@ -52,6 +52,33 @@ export default function WorkoutGenerator() {
     setPrompt(template);
   };
 
+  interface Exercise {
+    name: string;
+    sets: number;
+    reps: string;
+    rest: string;
+  }
+
+  interface DayWorkout {
+    focus: string;
+    exercises: Exercise[];
+    notes: string;
+  }
+
+  interface WorkoutPlan {
+    title: string;
+    overview: string;
+    weeklySchedule: {
+      [key: string]: DayWorkout;
+    };
+    nutritionTips: string[];
+  }
+  
+
+  interface WorkoutResponseProps {
+    content: WorkoutPlan;
+  }
+
   const quickPrompts = [
     "I'm a beginner looking to build strength with minimal equipment at home.",
     "I want to lose weight and have access to a full gym.",
@@ -104,7 +131,7 @@ export default function WorkoutGenerator() {
           </div>
         </>
       ) : (
-        <WorkoutResponse content={currentWorkout} />
+        <WorkoutResponse content={currentWorkout as unknown as WorkoutPlan} />
       )}
 
       {/* Form Section */}
