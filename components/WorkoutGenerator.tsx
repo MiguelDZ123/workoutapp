@@ -156,6 +156,7 @@ export default function WorkoutGenerator() {
                   key={index}
                   onClick={() => handleQuickPrompt(prompt)}
                   className="text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 px-3 py-1.5 rounded-full transition-colors"
+                  disabled={!session}
                 >
                   {prompt}
                 </button>
@@ -197,7 +198,7 @@ export default function WorkoutGenerator() {
                   {session ? (
                     <button disabled={!prompt.trim() || isGenerating || !session} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><Send className="w-4 h-4" /><span>Send</span></button>
                   ) : (
-                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-lg bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span className='max-sm:hidden'>Sign in</span></button>
+                    <button onClick={() => setIsAuthModalOpen(true)} className='flex items-center gap-2 ml-2 p-2 px-4 rounded-full bg-[#0fa579] text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed'><LogIn className="w-4 h-4" /><span className='max-sm:hidden'>Sign in</span></button>
                   )}
                 </div>
               </div>
