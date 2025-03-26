@@ -301,7 +301,7 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
               >
                 <div className="flex items-center gap-3">
                   <div>
-                    <h3 className="text-lg font-semibold capitalize">{day}</h3>
+                    <h3 className="text-lg font-semibold capitalize text-left">{day}</h3>
                     <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
                       <span>{dayWorkout.focus}</span>
                     </div>
@@ -322,7 +322,6 @@ export default function WorkoutPage({ params }: { params: Promise<{ id: string }
                         <div className="flex items-start justify-between">
                           <div>
                             <div className="flex items-center gap-2 mb-1">
-                              <Dumbbell className="w-4 h-4 text-green-500" />
                               <h4 className="font-medium">{exercise.name}</h4>
                             </div>
                             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">

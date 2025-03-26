@@ -168,7 +168,7 @@ export default function Header(this: any) {
                     <span>Documentation</span>
                   </Link>
                   <Link
-                    href="/alerts"
+                    href="/pricing"
                     className="flex items-center gap-3 text-gray-700 dark:text-gray-200"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >

@@ -117,7 +117,7 @@ export default function SavedWorkouts() {
 
   return (
     <Layout>
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="w-full max-w-5xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-semibold">Saved workouts</h1>
           <div className="flex items-center gap-2">
@@ -170,7 +170,7 @@ export default function SavedWorkouts() {
                       <div className="flex items-center justify-between sm:justify-start gap-2">
                         <Link 
                           href={`/protected/workout/${workout.id}`}
-                          className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white hover:text-green-500 dark:hover:text-green-400"
+                          className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white dark:hover:text-green-400"
                         >
                           {workout.title}
                           <ChevronRight className="w-4 h-4" />
